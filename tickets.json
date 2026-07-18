@@ -1,0 +1,58 @@
+[
+  {
+    "id": "T-1001",
+    "customer_email": "ana.k@example.com",
+    "message": "Hi, where is my order? It was supposed to arrive on Monday.",
+    "created_at": "2026-07-12T09:14:00Z",
+    "vip_customer": false,
+    "order_value_eur": 42.50
+  },
+  {
+    "id": "T-1002",
+    "customer_email": "j.mueller@example.de",
+    "message": "I want to return the shoes, they don't fit. Please refund me.",
+    "created_at": "2026-07-10T16:40:00Z",
+    "vip_customer": false,
+    "order_value_eur": 129.00
+  },
+  {
+    "id": "T-1003",
+    "customer_email": "vip.client@bigbrand.com",
+    "message": "Tracking shows no movement for 5 days, where is my order?",
+    "created_at": "2026-07-13T08:05:00Z",
+    "vip_customer": true,
+    "order_value_eur": 890.00
+  },
+  {
+    "id": "T-1004",
+    "customer_email": "marco.b@example.it",
+    "message": "I ordered the wrong size, can I change my order before it ships?",
+    "created_at": "2026-07-14T11:22:00Z",
+    "vip_customer": false,
+    "order_value_eur": 75.99
+  },
+  {
+    "id": "T-1005",
+    "customer_email": "old.ticket@example.com",
+    "message": "My package hasn't arrived and the tracking link is dead.",
+    "created_at": "2026-05-20T13:00:00Z",
+    "vip_customer": false,
+    "order_value_eur": 19.90
+  },
+  {
+    "id": "T-1006",
+    "customer_email": "sara.p@example.com",
+    "message": "Please pause my subscription for next month, I'm traveling.",
+    "created_at": "2026-07-14T19:45:00Z",
+    "vip_customer": false,
+    "order_value_eur": 24.00
+  },
+  {
+    "id": "T-1007",
+    "customer_email": "confused@example.com",
+    "message": "Hello, I have a question about your loyalty program points.",
+    "created_at": "2026-07-15T07:30:00Z",
+    "vip_customer": false,
+    "order_value_eur": 0
+  }
+]
