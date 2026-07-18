@@ -66,6 +66,7 @@ def process_tickets(tickets):
             "intent": intent,
             "auto_resolve": is_auto_resolvable(ticket, intent),
             "age_days": ticket_age_days(ticket["created_at"]),
+            "order_value_eur": ticket["order_value_eur"],
         })
     return results
 
@@ -74,14 +75,18 @@ def print_report(results):
     auto = [r for r in results if r["auto_resolve"]]
     manual = [r for r in results if not r["auto_resolve"]]
 
+    manual_value = sum(r["order_value_eur"] for r in manual)
+
     print(f"Processed {len(results)} tickets")
     print(f"  Auto-resolvable: {len(auto)}")
     print(f"  Needs human:     {len(manual)}")
+    print(f"  Unresolved value: EUR {manual_value:.2f}")
     print()
-    print(f"{'ID':<8}{'Intent':<15}{'Auto':<6}{'Age(d)':<8}Customer")
-    print("-" * 60)
+    print(f"{'ID':<8}{'Intent':<15}{'Auto':<6}{'Age(d)':<8}{'Value(EUR)':<12}Customer")
+    print("-" * 72)
     for r in results:
-        print(f"{r['id']:<8}{r['intent']:<15}{str(r['auto_resolve']):<6}{r['age_days']:<8}{r['customer']}")
+        value = "-" if r["auto_resolve"] else f"{r['order_value_eur']:.2f}"
+        print(f"{r['id']:<8}{r['intent']:<15}{str(r['auto_resolve']):<6}{r['age_days']:<8}{value:<12}{r['customer']}")
 
 
 def main():
