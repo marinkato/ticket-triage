@@ -14,6 +14,7 @@ from datetime import datetime, timezone
 CONFIG = {
     "auto_resolve_intents": ["wismo", "order_status"],
     "max_ticket_age_days": 30,
+    "max_auto_resolve_value_eur": 100,
     "input_file": "tickets.json",
 }
 
@@ -53,6 +54,8 @@ def is_auto_resolvable(ticket, intent):
         return False
     if ticket.get("vip_customer"):
         return False  # VIPs always go to a human
+    if ticket["order_value_eur"] > CONFIG["max_auto_resolve_value_eur"]:
+        return False  # high-value orders always go to a human
     return True
 
 
