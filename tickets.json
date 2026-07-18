@@ -59,7 +59,7 @@
    "id": "T-1008",
     "customer_email": "test@example.com",
     "message": "I'd like to return this jacket and get a refund, it's too small",
-    "created_at": "2026-07-16T10:00:00Z,
+    "created_at": "2026-07-16T10:00:00Z",
     "vip_customer": false,
     "order_value_eur": 45.00
   },
