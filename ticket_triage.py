@@ -88,7 +88,7 @@ def print_report(results):
     print(f"{'ID':<8}{'Intent':<15}{'Auto':<6}{'Age(d)':<8}{'Value(EUR)':<12}Customer")
     print("-" * 72)
     for r in results:
-        value = "-" if r["auto_resolve"] else f"{r['order_value_eur']:.2f}"
+        value = f"{r['order_value_eur']:.2f}"
         print(f"{r['id']:<8}{r['intent']:<15}{str(r['auto_resolve']):<6}{r['age_days']:<8}{value:<12}{r['customer']}")
 
 
