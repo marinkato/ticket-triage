@@ -1,1 +1,2 @@
 ticket_report_*.csv
+__pycache__/

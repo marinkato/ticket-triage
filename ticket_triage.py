@@ -23,8 +23,14 @@ INTENT_KEYWORDS = {
     "wismo": ["where is my order", "wismo", "tracking", "hasn't arrived"],
     "return": ["return", "refund", "send back", "money back"],
     "order_change": ["change my order", "wrong item", "change address", "wrong size"],
-    "subscription": ["subscription", "cancel my plan", "pause delivery"],
+    "subscription_cancel": ["cancel my subscription", "cancel subscription", "cancel my plan", "cancel my membership", "stop my subscription", "end my subscription"],
+    "subscription_pause": ["pause my subscription", "pause subscription", "pause delivery", "skip my delivery", "skip a delivery", "hold my subscription"],
     "other": [],
+}
+
+TEAM_ROUTING = {
+    "subscription_cancel": "retention",
+    "subscription_pause": "billing",
 }
 
 
@@ -72,6 +78,7 @@ def process_tickets(tickets):
             "age_days": ticket_age_days(ticket["created_at"]),
             "order_value_eur": ticket["order_value_eur"],
             "vip_customer": ticket.get("vip_customer", False),
+            "team": TEAM_ROUTING.get(intent, "-"),
         })
     return results
 
@@ -91,11 +98,11 @@ def print_report(results):
     print(f"  Needs human:     {len(manual)}")
     print(f"  Unresolved value: EUR {manual_value:.2f}")
     print()
-    print(f"{'ID':<8}{'Intent':<15}{'Auto':<6}{'VIP':<6}{'Age(d)':<8}{'Value(EUR)':<12}Customer")
-    print("-" * 78)
+    print(f"{'ID':<8}{'Intent':<20}{'Team':<11}{'Auto':<6}{'VIP':<6}{'Age(d)':<8}{'Value(EUR)':<12}Customer")
+    print("-" * 94)
     for r in queue_order(results):
         value = f"{r['order_value_eur']:.2f}"
-        print(f"{r['id']:<8}{r['intent']:<15}{str(r['auto_resolve']):<6}{str(r['vip_customer']):<6}{r['age_days']:<8}{value:<12}{r['customer']}")
+        print(f"{r['id']:<8}{r['intent']:<20}{r['team']:<11}{str(r['auto_resolve']):<6}{str(r['vip_customer']):<6}{r['age_days']:<8}{value:<12}{r['customer']}")
 
 
 def export_csv(results):
@@ -103,11 +110,12 @@ def export_csv(results):
     filename = f"ticket_report_{export_date}.csv"
     with open(filename, "w", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
-        writer.writerow(["ID", "Intent", "Auto", "VIP", "Age(d)", "Value(EUR)", "Customer"])
+        writer.writerow(["ID", "Intent", "Team", "Auto", "VIP", "Age(d)", "Value(EUR)", "Customer"])
         for r in queue_order(results):
             writer.writerow([
                 r["id"],
                 r["intent"],
+                r["team"],
                 r["auto_resolve"],
                 r["vip_customer"],
                 r["age_days"],
