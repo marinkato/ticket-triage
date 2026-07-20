@@ -12,7 +12,7 @@ import json
 from datetime import datetime, timezone
 
 CONFIG = {
-    "auto_resolve_intents": ["wismo", "order_status"],
+    "auto_resolve_intents": ["wismo", "order_status", "return"],
     "max_ticket_age_days": 30,
     "max_auto_resolve_value_eur": 100,
     "input_file": "tickets.json",
