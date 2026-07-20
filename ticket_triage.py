@@ -70,8 +70,13 @@ def process_tickets(tickets):
             "auto_resolve": is_auto_resolvable(ticket, intent),
             "age_days": ticket_age_days(ticket["created_at"]),
             "order_value_eur": ticket["order_value_eur"],
+            "vip_customer": ticket.get("vip_customer", False),
         })
     return results
+
+
+def queue_order(results):
+    return sorted(results, key=lambda r: not r["vip_customer"])
 
 
 def print_report(results):
@@ -85,11 +90,11 @@ def print_report(results):
     print(f"  Needs human:     {len(manual)}")
     print(f"  Unresolved value: EUR {manual_value:.2f}")
     print()
-    print(f"{'ID':<8}{'Intent':<15}{'Auto':<6}{'Age(d)':<8}{'Value(EUR)':<12}Customer")
-    print("-" * 72)
-    for r in results:
+    print(f"{'ID':<8}{'Intent':<15}{'Auto':<6}{'VIP':<6}{'Age(d)':<8}{'Value(EUR)':<12}Customer")
+    print("-" * 78)
+    for r in queue_order(results):
         value = f"{r['order_value_eur']:.2f}"
-        print(f"{r['id']:<8}{r['intent']:<15}{str(r['auto_resolve']):<6}{r['age_days']:<8}{value:<12}{r['customer']}")
+        print(f"{r['id']:<8}{r['intent']:<15}{str(r['auto_resolve']):<6}{str(r['vip_customer']):<6}{r['age_days']:<8}{value:<12}{r['customer']}")
 
 
 def main():
