@@ -8,6 +8,7 @@ and prints a summary report.
 Run: python3 ticket_triage.py
 """
 
+import csv
 import json
 from datetime import datetime, timezone
 
@@ -97,10 +98,31 @@ def print_report(results):
         print(f"{r['id']:<8}{r['intent']:<15}{str(r['auto_resolve']):<6}{str(r['vip_customer']):<6}{r['age_days']:<8}{value:<12}{r['customer']}")
 
 
+def export_csv(results):
+    export_date = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    filename = f"ticket_report_{export_date}.csv"
+    with open(filename, "w", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        writer.writerow(["ID", "Intent", "Auto", "VIP", "Age(d)", "Value(EUR)", "Customer"])
+        for r in queue_order(results):
+            writer.writerow([
+                r["id"],
+                r["intent"],
+                r["auto_resolve"],
+                r["vip_customer"],
+                r["age_days"],
+                f"{r['order_value_eur']:.2f}",
+                r["customer"],
+            ])
+    return filename
+
+
 def main():
     tickets = load_tickets(CONFIG["input_file"])
     results = process_tickets(tickets)
     print_report(results)
+    csv_path = export_csv(results)
+    print(f"\nCSV report exported to {csv_path}")
 
 
 if __name__ == "__main__":
