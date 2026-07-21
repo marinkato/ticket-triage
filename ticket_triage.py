@@ -106,8 +106,8 @@ def print_report(results):
 
 
 def export_csv(results):
-    export_date = datetime.now(timezone.utc).strftime("%Y-%m-%d")
-    filename = f"ticket_report_{export_date}.csv"
+    export_timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d_%H-%M-%S")
+    filename = f"ticket_report_{export_timestamp}.csv"
     with open(filename, "w", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
         writer.writerow(["ID", "Intent", "Team", "Auto", "VIP", "Age(d)", "Value(EUR)", "Customer"])
