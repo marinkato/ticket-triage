@@ -19,3 +19,10 @@ Running log of changes and decisions made during this exercise. One line per dec
 - 13:30 — Local cleanup: CSV exports were piling up loose in the project root. `export_csv()` now writes into a `reports/` folder (created via `os.makedirs` if missing) instead of the project root. `.gitignore` updated from `ticket_report_*.csv` to `reports/` — same intent (generated artifacts, not source), just matching the new location.
 - 14:00 — Added `shipped` (bool) to every ticket in `tickets.json`, needed for the new address-change auto-resolve rule below.
 - 14:15 — Client rule: address-change requests auto-resolve if the order hasn't shipped yet, go to a human if it has. Applies to VIPs too, but only under the standard 100 EUR value cap — above that, VIPs still always go to a human. Scoped this narrowly to address changes only, not the whole `order_change` bucket (wrong item/wrong size), so split a new `address_change` intent out of `order_change` with its own keyword list — same pattern as the subscription cancel/pause split, and for the same reason (`order_change` previously held `"change address"` alongside unrelated wrong-item/wrong-size phrasing). `is_auto_resolvable()` special-cases `address_change` since the rule (shipped-based, with a VIP carve-out) doesn't fit the standard age/value-cap path every other auto-resolve intent uses. Added 4 test tickets (T-1012–T-1015) covering not-shipped, shipped, VIP-under-cap, and VIP-over-cap — all classify correctly.
+
+## Takeaways
+
+- Keep limits and rules in one config spot, not buried in the logic — easier to change later.
+- Only add what's actually asked for — don't expand a rule wider than the request.
+- VIP status isn't an automatic override everywhere — it depends on the actual risk in each rule.
+- Always test new rules with a case built to trigger them, not just by re-running old data.
