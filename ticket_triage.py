@@ -10,7 +10,10 @@ Run: python3 ticket_triage.py
 
 import csv
 import json
+import os
 from datetime import datetime, timezone
+
+REPORTS_DIR = "reports"
 
 CONFIG = {
     "auto_resolve_intents": ["wismo", "order_status", "return"],
@@ -22,7 +25,8 @@ CONFIG = {
 INTENT_KEYWORDS = {
     "wismo": ["where is my order", "wismo", "tracking", "hasn't arrived"],
     "return": ["return", "refund", "send back", "money back"],
-    "order_change": ["change my order", "wrong item", "change address", "wrong size"],
+    "order_change": ["change my order", "wrong item", "wrong size"],
+    "address_change": ["change address", "change my address", "wrong address", "update my address", "shipping address", "delivery address"],
     "subscription_cancel": ["cancel my subscription", "cancel subscription", "cancel my plan", "cancel my membership", "stop my subscription", "end my subscription"],
     "subscription_pause": ["pause my subscription", "pause subscription", "pause delivery", "skip my delivery", "skip a delivery", "hold my subscription"],
     "other": [],
@@ -55,6 +59,15 @@ def ticket_age_days(created_at):
 
 
 def is_auto_resolvable(ticket, intent):
+    if intent == "address_change":
+        # Not the usual age/value gated rule: address changes auto-resolve purely on
+        # shipped status. VIPs are normally always routed to a human, but this rule
+        # carves out an explicit exception for them, capped at the standard value cap.
+        if ticket.get("shipped"):
+            return False  # already shipped — a human needs to handle it
+        if ticket.get("vip_customer"):
+            return ticket["order_value_eur"] < CONFIG["max_auto_resolve_value_eur"]
+        return True
     if intent not in CONFIG["auto_resolve_intents"]:
         return False
     if ticket_age_days(ticket["created_at"]) > CONFIG["max_ticket_age_days"]:
@@ -106,8 +119,9 @@ def print_report(results):
 
 
 def export_csv(results):
+    os.makedirs(REPORTS_DIR, exist_ok=True)
     export_timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d_%H-%M-%S")
-    filename = f"ticket_report_{export_timestamp}.csv"
+    filename = os.path.join(REPORTS_DIR, f"ticket_report_{export_timestamp}.csv")
     with open(filename, "w", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
         writer.writerow(["ID", "Intent", "Team", "Auto", "VIP", "Age(d)", "Value(EUR)", "Customer"])
